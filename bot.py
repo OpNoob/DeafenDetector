@@ -107,4 +107,8 @@ async def frequentJobs():
 
 
 if __name__ == "__main__":
-    client.run(TOKEN)
+    while True:
+        try:
+            client.run(TOKEN)
+        except Exception as e:
+            print(str(e))
