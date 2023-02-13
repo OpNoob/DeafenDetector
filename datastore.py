@@ -116,10 +116,9 @@ class Database:
 
 if __name__ == "__main__":
     dd = Database()
-    print(dd.getDeafenTracks())
-    dd.addDeafenTrack(123123123123, 234)
-    dd.addDeafenTrack(123123123123, 2344)
-
-    dd.commit()
-    # transaction.commit()
+    # print(dd.getDeafenTracks())
+    # dd.addDeafenTrack(123123123123, 234)
+    # dd.addDeafenTrack(123123123123, 2344)
+    #
+    # dd.commit()
     print(dd.getDeafenTracks())

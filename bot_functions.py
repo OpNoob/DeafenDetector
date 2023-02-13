@@ -61,11 +61,13 @@ def updateDeafenUsers(user_ids):
 
 def addDeafenTrack(guild_id: int, user_id: int):
     db.addDeafenTrack(guild_id, user_id)
+    dm.addUser(guild_id, user_id)
     db.commit()
 
 
 def removeDeafenTrack(guild_id: int, user_id: int):
     db.removeDeafenTrack(guild_id, user_id)
+    dm.removeUser(guild_id, user_id)
     db.commit()
 
 
