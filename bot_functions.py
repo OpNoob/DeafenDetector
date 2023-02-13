@@ -1,10 +1,10 @@
 import time
 
-import datastore
-import memory
+from datastore import *
+from memory import *
 
-db = datastore.Database()
-dm = memory.DeafenMemory(db.getDeafenTracks())
+db = Datastore()
+dm = DeafenMemory(db.getDeafenTracks())
 
 
 def convert_from_ms(milliseconds):
@@ -61,8 +61,8 @@ def updateDeafenUsers(user_ids):
 
 def addDeafenTrack(guild_id: int, user_id: int):
     db.addDeafenTrack(guild_id, user_id)
-    dm.addUser(guild_id, user_id)
     db.commit()
+    dm.addUser(guild_id, user_id)
 
 
 def removeDeafenTrack(guild_id: int, user_id: int):
@@ -73,3 +73,14 @@ def removeDeafenTrack(guild_id: int, user_id: int):
 
 def getDeafenData(user_id: int):
     return db.getDeafenData(user_id)
+
+
+if __name__ == "__main__":
+    print(db.getDeafenTracks())
+    # transaction.begin()
+
+    addDeafenTrack(123123123123, 66)
+    # db.addDeafenTrack(123123123123, 66)
+    # db.addDeafenTrack(123123123123, 77)
+    # db.commit()
+    print(db.getDeafenTracks())

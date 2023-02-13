@@ -4,7 +4,8 @@ from discord import app_commands
 from discord.ext.commands import has_permissions
 import asyncio
 
-import bot_functions
+from datastore import *
+from bot_functions import *
 
 with open("private/discord.txt", "r") as key_f:
     TOKEN = key_f.read()
@@ -20,7 +21,7 @@ loop = asyncio.get_event_loop()
 @has_permissions(administrator=True)
 async def trackDeafen(interaction, user: discord.Member):
     await interaction.response.send_message(f"Start tracking {user.mention} ...", ephemeral=False)
-    bot_functions.addDeafenTrack(interaction.guild.id, user.id)
+    addDeafenTrack(interaction.guild.id, user.id)
     await interaction.edit_original_response(content=f"User {user.mention} is now tracked.")
 
 
@@ -28,7 +29,7 @@ async def trackDeafen(interaction, user: discord.Member):
 @has_permissions(administrator=True)
 async def untrackDeafen(interaction, user: discord.Member):
     await interaction.response.send_message(f"Stop tracking {user.mention} ...", ephemeral=False)
-    bot_functions.removeDeafenTrack(interaction.guild.id, user.id)
+    removeDeafenTrack(interaction.guild.id, user.id)
     await interaction.edit_original_response(content=f"User {user.mention} is no longer tracked.")
 
 
@@ -36,7 +37,7 @@ async def untrackDeafen(interaction, user: discord.Member):
 async def untrackDeafen(interaction, user: discord.Member):
     await interaction.response.send_message(f"Getting {user.mention} stats ...", ephemeral=False)
 
-    deafen_data = bot_functions.getDeafenData(user.id)
+    deafen_data = getDeafenData(user.id)
     if deafen_data is None:
         msg = f"Error getting states of {user.mention}"
         await interaction.edit_original_response(content=msg)
@@ -57,7 +58,7 @@ async def xon(interaction):
         msg = f"Error getting user"
         await interaction.edit_original_response(content=msg)
     else:
-        deafen_data = bot_functions.getDeafenData(user.id)
+        deafen_data = getDeafenData(user.id)
         if deafen_data is None:
             msg = f"Error getting stats of {user.mention}"
             await interaction.edit_original_response(content=msg)
@@ -78,7 +79,7 @@ async def on_ready():
 
 @tasks.loop(seconds=5)
 async def frequentJobs():
-    user_ids = bot_functions.getTrackedDeafenUsers()
+    user_ids = getTrackedDeafenUsers()
     user_deafened_ids = set()
 
     for guild in client.guilds:
@@ -94,7 +95,7 @@ async def frequentJobs():
                     if len(vc_members) == 1 and vc_members[0].id == member.id:
                         user_deafened_ids.add(member.id)
 
-    alert_dict = bot_functions.updateDeafenUsers(user_deafened_ids)
+    alert_dict = updateDeafenUsers(user_deafened_ids)
     for guild_id, user_ids in alert_dict.items():
         guild = client.get_guild(guild_id)
         if guild is not None:
@@ -107,8 +108,9 @@ async def frequentJobs():
 
 
 if __name__ == "__main__":
-    while True:
-        try:
-            client.run(TOKEN)
-        except Exception as e:
-            print(str(e))
+    client.run(TOKEN)
+    # while True:
+    #     try:
+    #         client.run(TOKEN)
+    #     except Exception as e:
+    #         print(str(e))
