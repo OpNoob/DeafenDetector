@@ -1,8 +1,9 @@
-import pickle
-import os
+import ZODB
+from persistent import Persistent
+import transaction
 
 
-class GuildData:
+class GuildData(Persistent):
     def __init__(self, guild_id: int = None):
         self._guild_id = guild_id
         self.deafen_targets = set()
@@ -16,12 +17,14 @@ class GuildData:
 
     def addDeafenTarget(self, user_id):
         self.deafen_targets.add(user_id)
+        self._p_changed = True
 
     def removeDeafenTarget(self, user_id):
         self.deafen_targets.remove(user_id)
+        self._p_changed = True
 
 
-class DeafenData:
+class DeafenData(Persistent):
     def __init__(self):
         self.count = 0
         self.time_taken = 0
@@ -29,9 +32,10 @@ class DeafenData:
     def add(self, count=0, time=0):
         self.count += count
         self.time_taken += time
+        self._p_changed = True
 
 
-class UserData:
+class UserData(Persistent):
     def __init__(self, user_id: int = None):
         self._user_id = user_id
         self.deafen_data = DeafenData()
@@ -42,26 +46,18 @@ class UserData:
 
 
 class Database:
-    def __init__(self, path='data/database.pkl'):
+    def __init__(self, path='data/database.fs'):
         self._path = path
 
-        self.root = dict()
-        self._loaded = self.load()
+        self.connection = ZODB.connection(path)
+        self.root = self.connection.root()
 
         self.guild_data = self.getTable("guild_data")
         self.user_data = self.getTable("user_data")
 
-    def load(self):
-        if os.path.exists(self._path):
-            with open(self._path, "rb") as f:
-                self.root = pickle.load(f)
-                return True
-        else:
-            return False
-
-    def commit(self):
-        with open(self._path, "wb") as f:
-            pickle.dump(self.root, f)
+    @staticmethod
+    def commit():
+        transaction.commit()
 
     def getTable(self, table_name):
         if table_name not in self.root:
@@ -116,9 +112,9 @@ class Database:
 
 if __name__ == "__main__":
     dd = Database()
-    # print(dd.getDeafenTracks())
-    # dd.addDeafenTrack(123123123123, 234)
-    # dd.addDeafenTrack(123123123123, 2344)
-    #
-    # dd.commit()
+    print(dd.getDeafenTracks())
+    dd.addDeafenTrack(123123123123, 4)
+    dd.addDeafenTrack(123123123123, 5)
+
+    dd.commit()
     print(dd.getDeafenTracks())
