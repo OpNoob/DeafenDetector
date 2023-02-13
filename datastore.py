@@ -1,9 +1,8 @@
-import persistent
-import ZODB
-import transaction
+import pickle
+import os
 
 
-class GuildData(persistent.Persistent):
+class GuildData:
     def __init__(self, guild_id: int = None):
         self._guild_id = guild_id
         self.deafen_targets = set()
@@ -32,7 +31,7 @@ class DeafenData:
         self.time_taken += time
 
 
-class UserData(persistent.Persistent):
+class UserData:
     def __init__(self, user_id: int = None):
         self._user_id = user_id
         self.deafen_data = DeafenData()
@@ -43,16 +42,26 @@ class UserData(persistent.Persistent):
 
 
 class Database:
-    def __init__(self, path='data/database.fs'):
-        self.connection = ZODB.connection(path)
-        self.root = self.connection.root()
+    def __init__(self, path='data/database.pkl'):
+        self._path = path
+
+        self.root = dict()
+        self._loaded = self.load()
 
         self.guild_data = self.getTable("guild_data")
         self.user_data = self.getTable("user_data")
 
-    @staticmethod
-    def commit():
-        transaction.commit()
+    def load(self):
+        if os.path.exists(self._path):
+            with open(self._path, "rb") as f:
+                self.root = pickle.load(f)
+                return True
+        else:
+            return False
+
+    def commit(self):
+        with open(self._path, "wb") as f:
+            pickle.dump(self.root, f)
 
     def getTable(self, table_name):
         if table_name not in self.root:
@@ -107,7 +116,10 @@ class Database:
 
 if __name__ == "__main__":
     dd = Database()
-    dd.addDeafenTrack(123, 2)
-    dd.addDeafenTrack(123, 3)
+    print(dd.getDeafenTracks())
+    dd.addDeafenTrack(123123123123, 234)
+    dd.addDeafenTrack(123123123123, 2344)
+
     dd.commit()
+    # transaction.commit()
     print(dd.getDeafenTracks())

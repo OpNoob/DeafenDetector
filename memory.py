@@ -2,14 +2,13 @@ class DeafenMemory:
     def __init__(self, user_map: dict, time_limit: int = 5):
 
         # (last_time, last_time_marked, guild_ids)
-        self._users = set(user_map.keys())
         self.user_map = {user_id: (None, None, guild_ds) for user_id, guild_ds in user_map.items()}
 
         self.time_limit = time_limit
 
     @property
     def users(self):
-        return self._users
+        return self.user_map.keys()
 
     def markDeafen(self, deafen_ids: list[int], time):
         """
