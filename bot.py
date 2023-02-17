@@ -77,7 +77,7 @@ async def on_ready():
     frequentJobs.start()
 
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=60)
 async def frequentJobs():
     user_ids = getTrackedDeafenUsers()
     user_deafened_ids = set()
@@ -96,15 +96,17 @@ async def frequentJobs():
                         user_deafened_ids.add(member.id)
 
     alert_dict = updateDeafenUsers(user_deafened_ids)
-    for guild_id, user_ids in alert_dict.items():
-        guild = client.get_guild(guild_id)
-        if guild is not None:
-            channel = guild.system_channel  # getting system channel
-            for user_id in user_ids:
-                user = guild.get_member(user_id)
-                if user is not None:
-                    msg = f"User {user.mention} is deafen!!"
-                    await channel.send(msg)
+
+    # Send message
+    # for guild_id, user_ids in alert_dict.items():
+    #     guild = client.get_guild(guild_id)
+    #     if guild is not None:
+    #         channel = guild.system_channel  # getting system channel
+    #         for user_id in user_ids:
+    #             user = guild.get_member(user_id)
+    #             if user is not None:
+    #                 msg = f"User {user.mention} is deafen!!"
+    #                 await channel.send(msg)
 
 
 if __name__ == "__main__":

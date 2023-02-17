@@ -1,5 +1,5 @@
 class DeafenMemory:
-    def __init__(self, user_map: dict, time_limit: int = 5):
+    def __init__(self, user_map: dict, time_limit: int = 60):
 
         # (last_time, last_time_marked, guild_ids)
         self.user_map = {user_id: (None, None, guild_ds) for user_id, guild_ds in user_map.items()}
