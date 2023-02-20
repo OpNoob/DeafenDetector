@@ -100,7 +100,7 @@ async def frequentJobs():
                     # Check if alone in voice channel
                     vc_members = voice.channel.members
                     if len(vc_members) == 1 and vc_members[0].id == member.id:
-                        # Check if more than 1 member is present.  This will tigger a deafen counter
+                        # Check if more than 1 member is present.  This will tigger deafen counter
                         if num_members > 1:
                             user_deafened_ids.add(member.id)
 
