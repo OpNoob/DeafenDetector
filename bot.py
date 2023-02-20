@@ -84,6 +84,13 @@ async def frequentJobs():
 
     for guild in client.guilds:
         members = guild.members
+
+        # Get number of members in voice channels
+        voice_channel_list = guild.voice_channels
+        num_members = 0
+        for vc in voice_channel_list:
+            num_members += len(vc.members)
+
         for member in members:
             if not member.bot and member.id in user_ids:
                 voice = member.voice
@@ -93,7 +100,9 @@ async def frequentJobs():
                     # Check if alone in voice channel
                     vc_members = voice.channel.members
                     if len(vc_members) == 1 and vc_members[0].id == member.id:
-                        user_deafened_ids.add(member.id)
+                        # Check if more than 1 member is present.  This will tigger a deafen counter
+                        if num_members > 1:
+                            user_deafened_ids.add(member.id)
 
     alert_dict = updateDeafenUsers(user_deafened_ids)
 
