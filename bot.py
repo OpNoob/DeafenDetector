@@ -42,7 +42,7 @@ async def untrackDeafen(interaction, user: discord.Member):
         msg = f"Error getting states of {user.mention}"
         await interaction.edit_original_response(content=msg)
     else:
-        msg = f"--\n{user.display_name}\n--\n\nTimes deafen: {deafen_data.count}"
+        msg = f"--\n{user.display_name}\n--\n\nTimes deafen: {deafen_data}"
         # \nTotal tracked deafen time: {bot_functions.ms_to_str(deafen_data.time_taken*1000)}
         await interaction.edit_original_response(content=msg)
 
